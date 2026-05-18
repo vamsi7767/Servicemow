@@ -1,0 +1,161 @@
+<div class="dash">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">
+        <mat-icon>dashboard</mat-icon>
+      </div>
+      <span class="logo-name">IssueTrack</span>
+      <div class="logo-sep"></div>
+      <span class="logo-sub">Admin</span>
+    </div>
+
+    <div class="topbar-space"></div>
+
+    <div class="stat-pills" *ngIf="stats$ | async as stats">
+      <span class="pill pill-blue">
+        <mat-icon>radio_button_checked</mat-icon>
+        Open: {{ stats.open || 0 }}
+      </span>
+      <span class="pill pill-green">
+        <mat-icon>check_circle</mat-icon>
+        Closed: {{ stats.closed || 0 }}
+      </span>
+      <span class="pill pill-amber">
+        <mat-icon>pending</mat-icon>
+        In progress: {{ stats.inProgress || 0 }}
+      </span>
+      <span class="pill pill-red">
+        <mat-icon>layers</mat-icon>
+        Total: {{ stats.total || 0 }}
+      </span>
+    </div>
+
+    <div class="topbar-user">
+      <div class="avatar">AD</div>
+      <span class="user-name">Admin</span>
+      <button class="logout-btn" (click)="logout()" aria-label="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="dash-content">
+
+    <!-- Stats row -->
+    <p class="section-label">OVERVIEW</p>
+    <div class="stats-row" *ngIf="stats$ | async as stats">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Open issues</div>
+          <div class="stat-value">{{ stats.open || 0 }}</div>
+          <div class="stat-trend up">
+            <mat-icon>trending_up</mat-icon> This week
+          </div>
+        </div>
+        <div class="stat-icon si-blue"><mat-icon>radio_button_checked</mat-icon></div>
+      </div>
+
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Closed</div>
+          <div class="stat-value">{{ stats.closed || 0 }}</div>
+          <div class="stat-trend up">
+            <mat-icon>trending_up</mat-icon> This week
+          </div>
+        </div>
+        <div class="stat-icon si-green"><mat-icon>check_circle</mat-icon></div>
+      </div>
+
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">In progress</div>
+          <div class="stat-value">{{ stats.inProgress || 0 }}</div>
+          <div class="stat-trend neutral">
+            <mat-icon>remove</mat-icon> No change
+          </div>
+        </div>
+        <div class="stat-icon si-amber"><mat-icon>pending</mat-icon></div>
+      </div>
+
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Total issues</div>
+          <div class="stat-value">{{ stats.total || 0 }}</div>
+          <div class="stat-trend up">
+            <mat-icon>trending_up</mat-icon> This week
+          </div>
+        </div>
+        <div class="stat-icon si-red"><mat-icon>layers</mat-icon></div>
+      </div>
+    </div>
+
+    <!-- Nav cards -->
+    <p class="section-label">QUICK NAVIGATION</p>
+    <div class="nav-grid">
+
+      <div class="nav-card" routerLink="/usermanage">
+        <div class="nav-icon ni-purple"><mat-icon>group</mat-icon></div>
+        <div class="nav-body">
+          <div class="nav-title">User management</div>
+          <div class="nav-desc">Manage roles and access</div>
+        </div>
+        <div class="nav-footer">
+          <span class="nav-tag tag-purple">Users</span>
+          <mat-icon class="nav-arrow">arrow_forward</mat-icon>
+        </div>
+      </div>
+
+      <div class="nav-card" routerLink="/issue">
+        <div class="nav-icon ni-coral"><mat-icon>bug_report</mat-icon></div>
+        <div class="nav-body">
+          <div class="nav-title">Issue management</div>
+          <div class="nav-desc">Browse and update issues</div>
+        </div>
+        <div class="nav-footer">
+          <span class="nav-tag tag-coral">Issues</span>
+          <mat-icon class="nav-arrow">arrow_forward</mat-icon>
+        </div>
+      </div>
+
+      <div class="nav-card" routerLink="/create">
+        <div class="nav-icon ni-teal"><mat-icon>add_circle</mat-icon></div>
+        <div class="nav-body">
+          <div class="nav-title">Create issue</div>
+          <div class="nav-desc">Log a new issue with AI</div>
+        </div>
+        <div class="nav-footer">
+          <span class="nav-tag tag-teal">New</span>
+          <mat-icon class="nav-arrow">arrow_forward</mat-icon>
+        </div>
+      </div>
+
+      <div class="nav-card" routerLink="/report">
+        <div class="nav-icon ni-blue"><mat-icon>bar_chart</mat-icon></div>
+        <div class="nav-body">
+          <div class="nav-title">Reports</div>
+          <div class="nav-desc">Analytics and insights</div>
+        </div>
+        <div class="nav-footer">
+          <span class="nav-tag tag-blue">Analytics</span>
+          <mat-icon class="nav-arrow">arrow_forward</mat-icon>
+        </div>
+      </div>
+
+      <div class="nav-card" routerLink="/chat">
+        <div class="nav-icon ni-pink"><mat-icon>auto_awesome</mat-icon></div>
+        <div class="nav-body">
+          <div class="nav-title">AI assistant</div>
+          <div class="nav-desc">Chat with AI for help</div>
+        </div>
+        <div class="nav-footer">
+          <span class="nav-tag tag-pink">AI</span>
+          <mat-icon class="nav-arrow">arrow_forward</mat-icon>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

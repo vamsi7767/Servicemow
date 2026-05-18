@@ -1,0 +1,139 @@
+<div class="dash">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <button class="back-btn" (click)="goBack()" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">Issue dashboard</span>
+    <div class="topbar-space"></div>
+    <button class="new-btn" routerLink="/create">
+      <mat-icon>add_circle</mat-icon> New issue
+    </button>
+  </div>
+
+  <!-- Filters bar -->
+  <div class="filters-bar">
+    <div class="select-wrap">
+      <select class="filter-select" [(ngModel)]="selectedStatus" (change)="filterIssues()">
+        <option value="">All statuses</option>
+        <option value="OPEN">Open</option>
+        <option value="IN_PROGRESS">In progress</option>
+        <option value="CLOSED">Closed</option>
+      </select>
+      <mat-icon class="select-caret">expand_more</mat-icon>
+    </div>
+
+    <div class="select-wrap">
+      <select class="filter-select" [(ngModel)]="selectedUserId" (change)="filterIssues()">
+        <option value="">All users</option>
+        <option *ngFor="let u of users" [value]="u.id">{{ u.name }}</option>
+      </select>
+      <mat-icon class="select-caret">expand_more</mat-icon>
+    </div>
+
+    <div class="search-wrap">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchIssues()"
+        (input)="searchIssues()"
+        placeholder="Search by title, description, comments..."
+      />
+      <button class="search-btn" (click)="searchIssues()" aria-label="Search">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="content">
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-title">All issues</span>
+        <span class="table-count">{{ (issues$ | async)?.length || 0 }} issues</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Created by</th>
+              <th>Assigned to</th>
+              <th>Created at</th>
+              <th>Updated at</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let issue of (issues$ | async)">
+              <td class="id-cell">#{{ issue.id }}</td>
+
+              <td class="title-cell" [title]="issue.title">{{ issue.title }}</td>
+
+              <td>
+                <span class="badge"
+                  [class.badge-open]="issue.status === 'OPEN'"
+                  [class.badge-progress]="issue.status === 'IN_PROGRESS'"
+                  [class.badge-closed]="issue.status === 'CLOSED'"
+                >
+                  <mat-icon *ngIf="issue.status === 'OPEN'">radio_button_checked</mat-icon>
+                  <mat-icon *ngIf="issue.status === 'IN_PROGRESS'">pending</mat-icon>
+                  <mat-icon *ngIf="issue.status === 'CLOSED'">check_circle</mat-icon>
+                  {{ issue.status === 'IN_PROGRESS' ? 'In progress' : (issue.status | titlecase) }}
+                </span>
+              </td>
+
+              <td>
+                <div class="avatar-cell">
+                 <div class="av av-blue">{{ getInitials(issue.createdBy?.name) }}</div>
+                  {{ issue.createdBy?.name }}
+                </div>
+              </td>
+
+              <td>
+                <div class="avatar-cell">
+                 <div class="av av-teal">{{ getInitials(issue.assignedTo?.name) }}</div>
+                  {{ issue.assignedTo?.name || '—' }}
+                </div>
+              </td>
+
+              <td class="date-cell">{{ issue.createdAt | date:'MMM d, y' }}</td>
+              <td class="date-cell">{{ issue.updatedAt | date:'MMM d, y' }}</td>
+
+              <td>
+                <button class="view-btn" (click)="openDescription(issue)">
+                  <mat-icon>visibility</mat-icon> View
+                </button>
+              </td>
+
+              <td>
+                <div class="action-btns">
+                  <button class="act-btn progress" (click)="updateStatus(issue.id, 'IN_PROGRESS')" title="Mark in progress">
+                    <mat-icon>autorenew</mat-icon>
+                  </button>
+                  <button class="act-btn close" (click)="updateStatus(issue.id, 'CLOSED')" title="Mark closed">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                  <button class="act-btn comment" (click)="openComments(issue)" title="Comments">
+                    <mat-icon>chat_bubble_outline</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="!(issues$ | async)?.length" class="empty-row">
+              <td colspan="9">No issues match your filters</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

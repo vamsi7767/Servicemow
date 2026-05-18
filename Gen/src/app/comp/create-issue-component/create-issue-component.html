@@ -1,0 +1,182 @@
+<div class="page-wrap">
+  <div class="form-card">
+
+    <div class="card-header">
+      <div class="header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="card-title">Create issue</h1>
+        <p class="card-sub">Type a title — AI will generate the description automatically</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <form (ngSubmit)="createIssue()" #issueForm="ngForm">
+
+        <!-- Title -->
+        <div class="field">
+          <div class="field-row">
+            <label class="field-label" for="f-title">Title</label>
+          </div>
+          <input
+            id="f-title"
+            class="f-input"
+            [(ngModel)]="issue.title"
+            name="title"
+            required
+            placeholder="e.g. Follow up IBAN masking Jira"
+            (blur)="generateDescriptionFromAI()"
+          />
+          <p class="field-hint">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/>
+            </svg>
+            Blur the field to auto-generate a description
+          </p>
+        </div>
+
+        <!-- Description -->
+        <div class="field">
+          <div class="field-row">
+            <label class="field-label" for="f-desc">Description</label>
+            <span class="badge badge-success" *ngIf="!loadingDescription && !fixingGrammar && issue.description">
+              <span class="status-dot"></span> AI generated
+            </span>
+            <span class="badge badge-neutral" *ngIf="loadingDescription">
+              <span class="spinner"></span> Generating
+            </span>
+            <span class="badge badge-neutral" *ngIf="fixingGrammar">
+              <span class="spinner"></span> Fixing grammar
+            </span>
+          </div>
+
+          <div class="textarea-wrap" [class.is-loading]="loadingDescription || fixingGrammar">
+            <textarea
+              id="f-desc"
+              class="f-textarea"
+              rows="4"
+              [(ngModel)]="issue.description"
+              name="description"
+              required
+              placeholder="Start typing your own description, or let AI generate one from the title..."
+              [disabled]="loadingDescription || fixingGrammar"
+            ></textarea>
+
+            <div class="textarea-actions">
+              <button
+                type="button"
+                class="ta-btn"
+                (click)="regenerateDescription()"
+                [disabled]="loadingDescription || fixingGrammar || !issue.title"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M23 4v6h-6M1 20v-6h6"/>
+                  <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                </svg>
+                Regenerate
+              </button>
+              <button
+                type="button"
+                class="ta-btn ta-btn-grammar"
+                (click)="fixGrammar()"
+                [disabled]="fixingGrammar || loadingDescription || !issue.description"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                {{ fixingGrammar ? 'Fixing...' : 'Fix grammar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Previous suggestions -->
+        <div class="field" *ngIf="history.length > 1">
+          <div class="field-row">
+            <label class="field-label">Previous suggestions</label>
+          </div>
+          <div class="chips">
+            <div
+              class="chip"
+              *ngFor="let s of history; let i = index"
+              (click)="selectSuggestion(s)"
+              [class.chip-active]="issue.description === s"
+            >
+              <span class="chip-num">#{{ i + 1 }}</span>
+              <span class="chip-text">{{ s | slice:0:72 }}...</span>
+              <span class="chip-use">Use ↗</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assign to -->
+        <div class="field">
+          <div class="field-row">
+            <label class="field-label" for="f-assign">Assign to</label>
+          </div>
+          <div class="select-wrap">
+            <select id="f-assign" class="f-select" [(ngModel)]="issue.assignedTo" name="assignedTo">
+              <option [ngValue]="null">Unassigned</option>
+              <option *ngFor="let user of users" [ngValue]="{id: user.id}">{{ user.name }}</option>
+            </select>
+            <svg class="select-caret" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn-outline"
+            (click)="openCompareModal()"
+            [disabled]="history.length < 2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="18"/>
+            </svg>
+            Compare suggestions
+          </button>
+          <div class="action-right">
+            <button type="button" class="btn-outline" routerLink="/admin">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="issueForm.invalid">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Create issue
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Compare modal -->
+<div class="modal-overlay" *ngIf="showCompareModal" (click)="closeCompareModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h2 class="modal-title">Compare suggestions</h2>
+      <button class="modal-close" (click)="closeCompareModal()" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-card" *ngFor="let s of history; let i = index">
+        <div class="modal-version">Version {{ i + 1 }}</div>
+        <p class="modal-text">{{ s }}</p>
+        <button class="modal-use" (click)="selectSuggestion(s)">Use this</button>
+      </div>
+    </div>
+  </div>
+</div>

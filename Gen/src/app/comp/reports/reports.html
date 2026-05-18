@@ -1,0 +1,196 @@
+<div class="dash">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <button class="back-btn" (click)="goBack()" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="page-title">Reports dashboard</span>
+    <div class="topbar-space"></div>
+    <button class="export-btn" (click)="exportCSV()">
+      <mat-icon>download</mat-icon> Export CSV
+    </button>
+  </div>
+
+  <div class="content" *ngIf="report">
+
+    <!-- Stat cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Closed this week</div>
+          <div class="stat-value">{{ report.weekClosed }}</div>
+          <div class="stat-sub">Last 7 days</div>
+        </div>
+        <div class="stat-icon si-blue"><mat-icon>calendar_today</mat-icon></div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Closed this month</div>
+          <div class="stat-value">{{ report.monthClosed }}</div>
+          <div class="stat-sub">Last 30 days</div>
+        </div>
+        <div class="stat-icon si-green"><mat-icon>event</mat-icon></div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Closed this year</div>
+          <div class="stat-value">{{ report.yearClosed }}</div>
+          <div class="stat-sub">Across all teams</div>
+        </div>
+        <div class="stat-icon si-purple"><mat-icon>bar_chart</mat-icon></div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Older than 30 days</div>
+          <div class="stat-value">{{ report.olderThan30Days?.length }}</div>
+          <div class="stat-sub">Needs attention</div>
+        </div>
+        <div class="stat-icon si-red"><mat-icon>warning</mat-icon></div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="row2">
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Weekly trend</span>
+          <span class="card-sub">Opened vs closed</span>
+        </div>
+        <div class="chart-pad">
+          <canvas #weeklyChart></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Status breakdown</span>
+          <span class="card-sub">Current snapshot</span>
+        </div>
+        <div class="chart-pad">
+          <canvas #statusChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expandable sections -->
+    <div class="expand-grid">
+
+      <div class="expand-card">
+        <div class="expand-head" (click)="toggleSection('week')">
+          <div class="expand-left">
+            <div class="expand-icon si-blue"><mat-icon>calendar_today</mat-icon></div>
+            <div>
+              <div class="expand-title">Closed this week</div>
+              <div class="expand-count">{{ report.weekClosed }}</div>
+            </div>
+          </div>
+          <div class="expand-right">
+            <span class="ebadge badge-blue">Week</span>
+            <mat-icon [class.rotated]="openSections['week']">expand_more</mat-icon>
+          </div>
+        </div>
+        <div class="expand-body" *ngIf="openSections['week']">
+          <table class="mini-table">
+            <thead><tr><th>ID</th><th>Title</th><th>Created by</th><th>Assigned To</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let issue of report.weekClosedIssues">
+                <td class="id-mono">#{{ issue.id }}</td>
+                <td>{{ issue.title }}</td>
+                <td>{{ issue.createdBy?.name }}</td>
+                 <td>{{issue.assignedTo?.name}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="expand-card">
+        <div class="expand-head" (click)="toggleSection('month')">
+          <div class="expand-left">
+            <div class="expand-icon si-green"><mat-icon>event</mat-icon></div>
+            <div>
+              <div class="expand-title">Closed this month</div>
+              <div class="expand-count">{{ report.monthClosed }}</div>
+            </div>
+          </div>
+          <div class="expand-right">
+            <span class="ebadge badge-green">Month</span>
+            <mat-icon [class.rotated]="openSections['month']">expand_more</mat-icon>
+          </div>
+        </div>
+        <div class="expand-body" *ngIf="openSections['month']">
+          <table class="mini-table">
+         <thead><tr><th>ID</th><th>Title</th><th>Created by</th><th>Assigned To</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let issue of report.monthClosedIssues">
+                <td class="id-mono">#{{ issue.id }}</td>
+                <td>{{ issue.title }}</td>
+                <td>{{ issue.createdBy?.name }}</td>
+                <td>{{issue.assignedTo?.name}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="expand-card">
+        <div class="expand-head" (click)="toggleSection('year')">
+          <div class="expand-left">
+            <div class="expand-icon si-purple"><mat-icon>bar_chart</mat-icon></div>
+            <div>
+              <div class="expand-title">Closed this year</div>
+              <div class="expand-count">{{ report.yearClosed }}</div>
+            </div>
+          </div>
+          <div class="expand-right">
+            <span class="ebadge badge-purple">Year</span>
+            <mat-icon [class.rotated]="openSections['year']">expand_more</mat-icon>
+          </div>
+        </div>
+        <div class="expand-body" *ngIf="openSections['year']">
+          <table class="mini-table">
+        <thead><tr><th>ID</th><th>Title</th><th>Created by</th><th>Assigned To</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let issue of report.yearClosedIssues">
+                <td class="id-mono">#{{ issue.id }}</td>
+                <td>{{ issue.title }}</td>
+                <td>{{ issue.createdBy?.name }}</td>
+                 <td>{{issue.assignedTo?.name}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="expand-card">
+        <div class="expand-head" (click)="toggleSection('stale')">
+          <div class="expand-left">
+            <div class="expand-icon si-red"><mat-icon>warning</mat-icon></div>
+            <div>
+              <div class="expand-title">Older than 30 days</div>
+              <div class="expand-count">{{ report.olderThan30Days?.length }}</div>
+            </div>
+          </div>
+          <div class="expand-right">
+            <span class="ebadge badge-red">Stale</span>
+            <mat-icon [class.rotated]="openSections['stale']">expand_more</mat-icon>
+          </div>
+        </div>
+        <div class="expand-body" *ngIf="openSections['stale']">
+          <table class="mini-table">
+<thead><tr><th>ID</th><th>Title</th><th>Created by</th><th>Assigned To</th></tr></thead>
+            <tbody>
+              <tr class="warn-row" *ngFor="let issue of report.olderThan30Days">
+                <td class="id-mono">#{{ issue.id }}</td>
+                <td>{{ issue.title }}</td>
+                <td>{{ issue.createdAt | date:'MMM d, y' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

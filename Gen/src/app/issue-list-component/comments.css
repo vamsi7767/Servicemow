@@ -1,0 +1,143 @@
+.comments-dialog h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+  padding: 16px 20px 0;
+  margin: 0;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.comment-item {
+  background: #f8f8f8;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.comment-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e8f0fe;
+  color: #1558b0;
+  font-size: 9px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-author {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.comment-date {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.comment-text {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.comment-input-wrap {
+  position: relative;
+  margin-top: 4px;
+}
+
+.comment-textarea {
+  width: 100%;
+  font-size: 13px;
+  padding: 10px 12px 40px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  font-family: inherit;
+  color: #222;
+  transition: border-color 0.15s;
+}
+
+.comment-textarea:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+}
+
+.grammar-fix-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(234,134,0,0.3);
+  background: #fef9e7;
+  color: #b45309;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.grammar-fix-btn:hover:not(:disabled) { opacity: 0.8; }
+.grammar-fix-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(0,0,0,0.07);
+}
+
+.btn-cancel {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: none;
+  color: #555;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.btn-cancel:hover { background: #f5f5f5; }
+
+.btn-submit {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #1a73e8;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.btn-submit:hover { opacity: 0.85; }

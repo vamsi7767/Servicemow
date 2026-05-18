@@ -1,0 +1,20 @@
+.user-management-container {
+  padding: 30px;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  min-height: 100vh;
+}
+
+table {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+mat-header-cell {
+  font-weight: bold;
+  color: #1976d2;
+}
+
+mat-icon {
+  cursor: pointer;
+}
